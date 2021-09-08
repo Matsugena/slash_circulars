@@ -17,6 +17,7 @@ public class GameLifetimeScope : LifetimeScope {
 
         // builder.RegisterEntryPoint<MessagePipeDemo> (Lifetime.Singleton);
 
+        builder.Register<IClickable, ClickableEnemy> (Lifetime.Singleton);
         builder.RegisterEntryPoint<ClickEntryPoint> (Lifetime.Singleton);
 
     }
