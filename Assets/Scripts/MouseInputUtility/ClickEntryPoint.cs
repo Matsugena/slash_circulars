@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using MessagePipe;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
@@ -11,7 +12,9 @@ public class ClickEntryPoint : ITickable, IInitializable {
     private Camera _camera = null;
 
     [SerializeField] private int _clickCount = 0;
-    [SerializeField] private string[] tagMask; // ここをDIします
+    [SerializeField] private string[] tagMask;
+
+    [Inject] MessagePipe.IPublisher<DamageData> _damagePublisher;
 
     [Inject]
     ClickEntryPoint (IClickable c) {
@@ -20,12 +23,10 @@ public class ClickEntryPoint : ITickable, IInitializable {
 
     public void Initialize () {
         _camera = Camera.main;
-
     }
 
     void ITickable.Tick () {
         if (Input.GetMouseButtonUp (0)) {
-            Debug.Log (tagMask);
             GetRayHitPointFromCamera ();
 
             _clickCount++;
@@ -44,14 +45,14 @@ public class ClickEntryPoint : ITickable, IInitializable {
         if (hits.Count <= 0) return;
 
         foreach (RaycastHit item in hits) {
-            Debug.Log (item.collider.gameObject);
+            Debug.Log ("hitObject" + item.transform.name);
+            _damagePublisher.Publish (
+                new DamageData {
+                    damage = 1,
+                        targetInstanceId = item.transform.gameObject.GetInstanceID ()
+                }
+            );
         }
 
-        var distance = Vector3.Distance (
-            _camera.transform.position, hits.First ().point);
-        var mousePosition = new Vector3 (
-            Input.mousePosition.x, Input.mousePosition.y, distance);
-
-        Debug.DrawRay (ray.origin, ray.direction * 1000f); // debug
     }
 }
