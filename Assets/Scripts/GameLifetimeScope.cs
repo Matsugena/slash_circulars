@@ -20,6 +20,8 @@ public class GameLifetimeScope : LifetimeScope {
         builder.RegisterMessageBroker<DamageData> (options);
         builder.RegisterMessageBroker<Jump> (options);
         builder.RegisterMessageBroker<Move> (options);
+        builder.RegisterMessageBroker<MouseEvent> (options);
+        builder.RegisterMessageBroker<DragEvent> (options);
 
         var scope = Lifetime.Singleton;
         builder.Register<IPlayerInput, PlayerInput> (scope);
