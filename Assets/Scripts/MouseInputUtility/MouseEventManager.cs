@@ -16,6 +16,7 @@ public class MouseEventManager : MonoBehaviour {
     private IObservable<MouseEvent> mouseDrag { get; set; }
 
     private Camera mainCamera;
+    private IDisposable dragDisposable;
 
     private void Start () {
 
@@ -39,20 +40,14 @@ public class MouseEventManager : MonoBehaviour {
 
         // SubScribe
         mouseDown.Subscribe (_ => {
-            Debug.Log ("mds1 " + GetMouseEvent ().mousePosition.ToString ());
             mouse.Publish (GetMouseEvent ());
-        });
+        }).AddTo (this);
 
-        mouseDrag
-            .Zip (mouseUp,
-                (down, up) => {
-                    CreateObject (Vector3.zero, down.mousePosition);
-                    CreateObject (Vector3.zero, up.mousePosition);
-                    Debug.Log ("mds2 " + down.mousePosition.ToString ());
-                    Debug.Log ("mup " + up.mousePosition.ToString ());
-                    return (down, up);
-                })
-            .Subscribe ();
+        dragDisposable = mouseDrag.Subscribe (d => {
+            drag.Publish (new DragEvent {
+                position = d.position, time = d.time
+            });
+        });
 
     }
     // クリックされたマウス座標をメインカメラからみて適切な位置へ変換する
@@ -61,23 +56,15 @@ public class MouseEventManager : MonoBehaviour {
         var p = new Vector3 (
             Input.mousePosition.x,
             Input.mousePosition.y,
-            5
+            12
         );
 
         return new MouseEvent {
-            mousePosition = mainCamera.ScreenToWorldPoint (p), time = Time.time
+            position = mainCamera.ScreenToWorldPoint (p), time = Time.time
         };
     }
 
-    //  テスト用
-    private void CreateObject (Vector3 from, Vector3 end) {
-        var cube = GameObject.CreatePrimitive (
-            PrimitiveType.Cube
-        );
-        // 2点の中心に移動
-        cube.transform.position = (from + end) * 0.5f;
-        // from の方向に物体を向ける
-        cube.transform.forward = from;
-        // サイズを拡大する
+    private void OnDestroy () {
+        dragDisposable?.Dispose ();
     }
 }

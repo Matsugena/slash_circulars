@@ -1,6 +1,6 @@
 using UnityEngine;
 
 public interface IMouseEvent {
-    Vector3 mousePosition { get; set; }
+    Vector3 position { get; set; }
     float time { get; set; }
 }

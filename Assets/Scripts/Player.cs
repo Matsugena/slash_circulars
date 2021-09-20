@@ -6,14 +6,19 @@ using VContainer;
 
 public class Player : MonoBehaviour {
 
-    [Inject] private ISubscriber<Jump> _jump { get; set; }
+    [Inject] private ISubscriber<Jump> jump { get; set; }
 
-    [Inject] private ISubscriber<Move> _move { get; set; }
+    [Inject] private ISubscriber<Move> move { get; set; }
+
+    [Inject] private ISubscriber<DragEvent> drag { get; set; }
 
     // Start is called before the first frame update
     void Start () {
-        _move.Subscribe (mv => { Move (mv); });
-        _jump.Subscribe (j => { Jump (j); });
+        move.Subscribe (mv => { Move (mv); });
+        jump.Subscribe (j => { Jump (j); });
+        drag.Subscribe (d => {
+            this.transform.position = d.position;
+        });
     }
 
     private void Move (Move m) {
