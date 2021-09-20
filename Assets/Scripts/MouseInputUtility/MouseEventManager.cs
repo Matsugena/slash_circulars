@@ -1,3 +1,4 @@
+using System;
 using MessagePipe;
 using UniRx;
 using UniRx.Triggers;
@@ -10,8 +11,9 @@ public class MouseEventManager : MonoBehaviour {
 
     [Inject] private IPublisher<DragEvent> drag { get; set; }
 
-    private System.IObservable<MouseEvent> mouseDownStream { get; set; }
-    private System.IObservable<MouseEvent> mouseUpStream { get; set; }
+    private IObservable<MouseEvent> mouseDown { get; set; }
+    private IObservable<MouseEvent> mouseUp { get; set; }
+    private IObservable<MouseEvent> mouseDrag { get; set; }
 
     private Camera mainCamera;
 
@@ -19,36 +21,38 @@ public class MouseEventManager : MonoBehaviour {
 
         mainCamera = Camera.main;
 
-        mouseDownStream =
-            this.UpdateAsObservable ()
+        // Stream の作成
+        mouseDown = this.UpdateAsObservable ()
             .Where (_ => Input.GetMouseButtonDown (0))
             .Select (_ => { return GetMouseEvent (); });
 
-        mouseDownStream.Subscribe (_ => {
-            mouse.Publish (GetMouseEvent ());
-        });
-
-        mouseUpStream =
-            this.UpdateAsObservable ()
+        mouseUp = this.UpdateAsObservable ()
             .Where (_ => Input.GetMouseButtonUp (0))
             .Select (_ => { return GetMouseEvent (); });
 
-        mouseDownStream
-            .Zip (mouseUpStream,
+        // ドラッグ中マウス座標をストリームし続ける
+        mouseDrag = this.UpdateAsObservable ()
+            .SkipUntil (mouseDown)
+            .TakeUntil (mouseUp)
+            .Repeat ()
+            .Select (_ => { return GetMouseEvent (); });
+
+        // SubScribe
+        mouseDown.Subscribe (_ => {
+            Debug.Log ("mds1 " + GetMouseEvent ().mousePosition.ToString ());
+            mouse.Publish (GetMouseEvent ());
+        });
+
+        mouseDrag
+            .Zip (mouseUp,
                 (down, up) => {
                     CreateObject (Vector3.zero, down.mousePosition);
                     CreateObject (Vector3.zero, up.mousePosition);
+                    Debug.Log ("mds2 " + down.mousePosition.ToString ());
+                    Debug.Log ("mup " + up.mousePosition.ToString ());
                     return (down, up);
                 })
-            .Subscribe (a => {
-                var up = a.up;
-                var down = a.down;
-                var dt = up.time - down.time; // 時間
-                var dm = Vector3.SqrMagnitude (up.mousePosition - down.mousePosition); //距離
-                // TODO クリックして待機した状態から、フリックした場合も処理を行いたい
-                // フリックした基準タイムから動作させたい
-                // CreateObject (down.mousePosition, up.mousePosition);
-            });
+            .Subscribe ();
 
     }
     // クリックされたマウス座標をメインカメラからみて適切な位置へ変換する
@@ -61,7 +65,7 @@ public class MouseEventManager : MonoBehaviour {
         );
 
         return new MouseEvent {
-            mousePosition = mainCamera.ScreenToWorldPoint (p)
+            mousePosition = mainCamera.ScreenToWorldPoint (p), time = Time.time
         };
     }
 
