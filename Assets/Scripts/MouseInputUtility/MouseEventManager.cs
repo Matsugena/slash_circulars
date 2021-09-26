@@ -5,9 +5,12 @@ using UniRx.Triggers;
 using UnityEngine;
 using VContainer;
 
+// TODO Utilty の中身から外す
 public class MouseEventManager : MonoBehaviour {
 
-    [Inject] private IPublisher<MouseEvent> mouse { get; set; }
+    [Inject] private IPublisher<MouseEvent> mouseDownPub { get; set; }
+
+    [Inject] private IPublisher<MouseUpEvent> mouseUpPub { get; set; }
 
     [Inject] private IPublisher<DragEvent> drag { get; set; }
 
@@ -39,14 +42,16 @@ public class MouseEventManager : MonoBehaviour {
             .Select (_ => { return GetMouseEvent (); });
 
         // SubScribe
-        mouseDown.Subscribe (_ => {
-            mouse.Publish (GetMouseEvent ());
+        mouseDown.Subscribe (mDw => {
+            mouseDownPub.Publish (mDw);
         }).AddTo (this);
 
-        dragDisposable = mouseDrag.Subscribe (d => {
-            drag.Publish (new DragEvent {
-                position = d.position, time = d.time
-            });
+        mouseUp.Subscribe (mUp => {
+            mouseUpPub.Publish (new MouseUpEvent (mUp));
+        }).AddTo (this);
+
+        dragDisposable = mouseDrag.Subscribe (mDr => {
+            drag.Publish (new DragEvent (mDr));
         });
 
     }

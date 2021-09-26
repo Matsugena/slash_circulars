@@ -21,6 +21,7 @@ public class GameLifetimeScope : LifetimeScope {
         builder.RegisterMessageBroker<Jump> (options);
         builder.RegisterMessageBroker<Move> (options);
         builder.RegisterMessageBroker<MouseEvent> (options);
+        builder.RegisterMessageBroker<MouseUpEvent> (options);
         builder.RegisterMessageBroker<DragEvent> (options);
 
         var scope = Lifetime.Singleton;

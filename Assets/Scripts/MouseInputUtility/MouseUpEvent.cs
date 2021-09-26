@@ -1,10 +1,11 @@
 using UnityEngine;
 
-public class DragEvent : IMouseEvent {
+public class MouseUpEvent : IMouseEvent {
     public Vector3 position { get; set; }
     public float time { get; set; }
-    public DragEvent (IMouseEvent ime) {
+    public MouseUpEvent (IMouseEvent ime) {
         this.position = ime.position;
         this.time = ime.time;
     }
+
 }
