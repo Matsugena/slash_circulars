@@ -23,10 +23,14 @@ public class GameLifetimeScope : LifetimeScope {
         builder.RegisterMessageBroker<MouseEvent> (options);
         builder.RegisterMessageBroker<MouseUpEvent> (options);
         builder.RegisterMessageBroker<DragEvent> (options);
+        builder.RegisterMessageBroker<GameEvent> (options);
 
         var scope = Lifetime.Singleton;
         builder.Register<IPlayerInput, PlayerInput> (scope);
         builder.Register<IClickable, ClickableEnemy> (scope);
+        // TODO 開発時と以外で分ける
+        builder.Register<IGameController, DevelopGameController> (scope);
+
         builder.RegisterEntryPoint<ClickEntryPoint> (scope);
         builder.RegisterEntryPoint<InputEntryPoint> (scope);
 

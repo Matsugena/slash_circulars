@@ -19,8 +19,9 @@ public class Player : MonoBehaviour {
 
     private MouseUpEvent mUpEvent;
     private MouseEvent mEvent;
-    private float flickDeltaTime = 5000f; // フリック受付時間
-    private float flickForceMagnitude = 1000; // 計算を省略
+    private float flickDeltaTime = 16 * 20; // フリック受付時間
+    private float flickForceMagnitude = 20; // 計算を省略
+    private bool isFlicked = false;
     [SerializeField] private Rigidbody rBody;
 
     // Start is called before the first frame update
@@ -28,15 +29,17 @@ public class Player : MonoBehaviour {
         move.Subscribe (mv => { Move (mv); });
         jump.Subscribe (j => { Jump (j); });
         drag.Subscribe (d => {
-            this.transform.position = d.position;
+            if (!isFlicked) {
+                this.transform.position = d.position;
+            }
         });
         mouseUp.Subscribe (v => {
             mUpEvent = v;
+            Flick ();
         }).AddTo (this);
 
         mouseDown.Subscribe (v => {
             mEvent = v;
-            Flick ();
         }).AddTo (this);
 
         //
@@ -55,13 +58,14 @@ public class Player : MonoBehaviour {
         Debug.Log ("3 : " + v);
 
         // 単純にAddForce
-        rBody.AddForce (new Vector3 (0, 10, 0) * flickForceMagnitude, ForceMode.Impulse);
+        rBody.AddForce (v * flickForceMagnitude, ForceMode.Impulse);
+        Debug.Log ("You Flicked!");
     }
 
     private void Move (Move m) {
         transform.Translate (m.axisDx * Time.deltaTime * 1.2f, 0, 0);
     }
     private void Jump (Jump j) {
-        transform.Translate (0, j.data, 0);
+        rBody.AddForce (new Vector3 (0, 10000, 0));
     }
 }
