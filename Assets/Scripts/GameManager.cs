@@ -19,8 +19,6 @@ public class GameManager : MonoBehaviour {
             Debug.Log (s);
             if (ge.Equals (GameEvent.DoReset ())) {
                 SceneManager.LoadScene (reloadSceneName);
-
-                Debug.Log ("2" + s);
             }
         });
     }

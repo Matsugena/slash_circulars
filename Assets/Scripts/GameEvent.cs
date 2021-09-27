@@ -17,4 +17,12 @@ public class GameEvent {
 
         return this.EventOf == (obj as GameEvent).EventOf;
     }
+
+    public override int GetHashCode () {
+        return base.GetHashCode ();
+    }
+
+    public override string ToString () {
+        return base.ToString ();
+    }
 }
