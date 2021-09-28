@@ -7,4 +7,7 @@ public class DragEvent : IMouseEvent {
         this.position = ime.position;
         this.time = ime.time;
     }
+    public DragEvent () {
+
+    }
 }
