@@ -20,8 +20,10 @@ public class DraggableObject : MonoBehaviour {
     private MouseEvent mEvent;
     private Vector3 moveStartPosition;
 
-    [SerializeField] private float thresholdMoving = 1; // TODO オブジェクトのスケールやフレームレートを考慮する必要があります
-    [SerializeField] private float thresholdFlick = 50; // TODO 画面サイズに応じて計算する必要があります
+    [SerializeField] private float thresholdMoving = 1.5f; // TODO オブジェクトのスケールやフレームレートを考慮する必要があります
+    [SerializeField] private float thresholdFlick = 30; // TODO 画面サイズに応じて計算する必要があります
+    [SerializeField] private float acceptableAngle = 1;// フリック角度のズレ許容範囲
+    [SerializeField] private int samplingDragPositionRate = 10; // ドラッグ位置のサンプリングレート(数)
 
     // デバッグ用
     private LineRenderer lineRenderer;
@@ -45,7 +47,7 @@ public class DraggableObject : MonoBehaviour {
 
         // ReactiveProperty(DragEvent) から平均速度を算出する
         drag.Where(x => x != null)
-            .Buffer(15).Where(d => d.Count >= 2)
+            .Buffer(samplingDragPositionRate).Where(d => d.Count >= 2)
             .Select(d => {
                 var a = d.First();
                 var b = d.Last();
@@ -58,10 +60,13 @@ public class DraggableObject : MonoBehaviour {
                 return dx / dt;
             })
             .Subscribe(v => {
+                // Z軸基準
+                Debug.Log("test" + Vector3.SignedAngle(draggingVerocity.Value, v, new Vector3(0, 0, 1)) + "度:" + Time.deltaTime);
                 draggingVerocity.Value = (draggingVerocity.Value + v) / 2;
 
                 // 平均速度が閾値を超えている場合、isMoving
-                isMoving.Value = v.magnitude > thresholdMoving;
+                isMoving.Value = v.magnitude > thresholdMoving
+                && Vector3.SignedAngle(draggingVerocity.Value, v, new Vector3(0, 0, 1)) < acceptableAngle;
             }).AddTo(this);
 
         // 動いている間は マテリアルを赤くする
@@ -76,7 +81,10 @@ public class DraggableObject : MonoBehaviour {
 
         draggingVerocity
             .Where(v => v.magnitude > thresholdFlick && v != Vector3.zero)
-            .Subscribe(_ => { Flick(); })
+            .Subscribe(v => {
+                Debug.Log(v.magnitude + ":" + Time.deltaTime);
+                Flick();
+            })
             .AddTo(this);
     }
 
@@ -98,4 +106,5 @@ public class DraggableObject : MonoBehaviour {
         draggingVerocity.Value = Vector3.zero;
         moveStartPosition = Vector3.zero;
     }
+
 }
