@@ -12,19 +12,18 @@ public class GameManager : MonoBehaviour {
     [Inject] ISubscriber<GameEvent> gEvent;
 
     // Start is called before the first frame update
-    void Start () {
-        gEvent.Subscribe (ge => {
-            var s = SceneManager.GetActiveScene ().name;
+    void Start() {
+        gEvent.Subscribe(ge => {
+            var s = SceneManager.GetActiveScene().name;
 
-            Debug.Log (s);
-            if (ge.Equals (GameEvent.DoReset ())) {
-                SceneManager.LoadScene (reloadSceneName);
+            if (ge.Equals(GameEvent.DoReset())) {
+                SceneManager.LoadScene(reloadSceneName);
             }
         });
     }
 
     // Update is called once per frame
-    void Update () {
+    void Update() {
 
     }
 }

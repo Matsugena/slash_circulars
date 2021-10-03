@@ -1160,7 +1160,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 04fc17d8a067b6347b3a1aed85094728, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  thresholdMoving: 45
+  thresholdMoving: 1
+  thresholdFlick: 80
+  acceptableAngle: 1
+  samplingDragPositionRate: 10
 --- !u!120 &1684699451
 LineRenderer:
   m_ObjectHideFlags: 0

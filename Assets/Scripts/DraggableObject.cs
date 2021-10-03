@@ -60,13 +60,11 @@ public class DraggableObject : MonoBehaviour {
                 return dx / dt;
             })
             .Subscribe(v => {
-                // Z軸基準
-                Debug.Log("test" + Vector3.SignedAngle(draggingVerocity.Value, v, new Vector3(0, 0, 1)) + "度:" + Time.deltaTime);
                 draggingVerocity.Value = (draggingVerocity.Value + v) / 2;
 
                 // 平均速度が閾値を超えている場合、isMoving
                 isMoving.Value = v.magnitude > thresholdMoving
-                && Vector3.SignedAngle(draggingVerocity.Value, v, new Vector3(0, 0, 1)) < acceptableAngle;
+                && Math.Abs(Vector3.SignedAngle(draggingVerocity.Value, v, new Vector3(0, 0, 1))) < acceptableAngle;
             }).AddTo(this);
 
         // 動いている間は マテリアルを赤くする

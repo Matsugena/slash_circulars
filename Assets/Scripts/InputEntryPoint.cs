@@ -17,17 +17,16 @@ public class InputEntryPoint : ITickable {
 
     [Inject] private IPublisher<Move> movePub { get; set; }
 
-    public void Tick () {
+    public void Tick() {
 
         // if (Input.GetMouseButtonDown (0)) {
         //     jumpPub.Publish (playereInput.jump);
         // }
-        movePub.Publish (pInput.Move (Input.GetAxis ("Horizontal")));
+        movePub.Publish(pInput.Move(Input.GetAxis("Horizontal")));
 
-        if (Input.GetKeyUp (KeyCode.Space)) {
+        if (Input.GetKeyUp(KeyCode.Space)) {
             // when space key up then reload scene
-            gController.Reset ();
-            Debug.Log ("reset" + new DateTime ());
+            gController.Reset();
         }
     }
 }
