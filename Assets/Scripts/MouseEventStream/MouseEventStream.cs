@@ -15,7 +15,6 @@ abstract public class MouseEventStream : MonoBehaviour {
 
     private void Start() {
 
-
         // Stream の作成
         mouseDown = this.UpdateAsObservable()
             .Where(_ => Input.GetMouseButtonDown(mouseButton))
@@ -45,5 +44,4 @@ abstract public class MouseEventStream : MonoBehaviour {
     private void OnDestroy() {
         dragDisposable?.Dispose();
     }
-
 }

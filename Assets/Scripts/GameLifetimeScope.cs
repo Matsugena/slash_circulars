@@ -14,7 +14,6 @@ public class GameLifetimeScope : LifetimeScope {
         var scope = Lifetime.Singleton;
         // TODO 開発時と以外で分ける
         builder.Register<IGameController, DevelopGameController>(scope);
-
         builder.RegisterEntryPoint<InputEntryPoint>(scope);
 
     }

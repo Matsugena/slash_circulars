@@ -1,7 +1,4 @@
-using System;
 using MessagePipe;
-using UniRx;
-using UniRx.Triggers;
 using UnityEngine;
 using VContainer;
 
@@ -14,28 +11,9 @@ public class MouseEventManager : MouseEventStream {
 
     private Camera mainCamera;
 
-    private void Start() {
-
+    private void Awake() {
         mainCamera = Camera.main;
-
-        // Stream の作成
-        mouseDown = this.UpdateAsObservable()
-            .Where(_ => Input.GetMouseButtonDown(0))
-            .Select(_ => { return GetMouseEvent(); });
-
-        mouseUp = this.UpdateAsObservable()
-            .Where(_ => Input.GetMouseButtonUp(0))
-            .Select(_ => { return GetMouseEvent(); });
-
-        // ドラッグ中マウス座標をストリームし続ける
-        mouseDrag = this.UpdateAsObservable()
-            .SkipUntil(mouseDown)
-            .TakeUntil(mouseUp)
-            .Repeat()
-            .Select(_ => { return GetMouseEvent(); });
-
     }
-
 
     protected override MouseEvent GetMouseEvent() {
         var p = new Vector3(
