@@ -9,6 +9,8 @@ using VContainer;
 
 public class DraggableObject : MonoBehaviour {
 
+    [Inject] private IPublisher<FlickEvent> flickPub { get; set; }
+
     [Inject] private ISubscriber<DragEvent> dragSub { get; set; }
     [Inject] private ISubscriber<MouseUpEvent> mUpSub { get; set; }
 
@@ -94,7 +96,8 @@ public class DraggableObject : MonoBehaviour {
             moveStartPosition,
             drag.Value.position
         };
-        lineRenderer.SetPositions(positions);
+        // lineRenderer.SetPositions(positions);
+        flickPub.Publish(new FlickEvent(positions[0], positions[1]));
 
         moveStartPosition = drag.Value.position;
         draggingVerocity.Value = Vector3.zero;
