@@ -1,4 +1,5 @@
 using MessagePipe;
+using UnityEngine;
 using VContainer;
 using VContainer.Unity;
 
@@ -11,6 +12,7 @@ public class GameLifetimeScope : LifetimeScope {
         builder.RegisterMessageBroker<DragEvent>(options);
         builder.RegisterMessageBroker<FlickEvent>(options);
         builder.RegisterMessageBroker<GameEvent>(options);
+        builder.RegisterMessageBroker<AttackData>(options);
 
         var scope = Lifetime.Singleton;
         // TODO 開発時と以外で分ける

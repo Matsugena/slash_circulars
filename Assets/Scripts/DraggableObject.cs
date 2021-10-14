@@ -82,7 +82,6 @@ public class DraggableObject : MonoBehaviour {
         draggingVerocity
             .Where(v => v.magnitude > thresholdFlick && v != Vector3.zero)
             .Subscribe(v => {
-                Debug.Log(v.magnitude + ":" + Time.deltaTime);
                 Flick();
             })
             .AddTo(this);
