@@ -6,6 +6,8 @@ using VContainer.Unity;
 public class GameLifetimeScope : LifetimeScope {
     protected override void Configure(IContainerBuilder builder) {
 
+        Application.targetFrameRate = 30;
+
         var options = builder.RegisterMessagePipe();
         builder.RegisterMessageBroker<MouseEvent>(options);
         builder.RegisterMessageBroker<MouseUpEvent>(options);
