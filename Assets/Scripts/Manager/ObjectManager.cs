@@ -9,6 +9,7 @@ public class ObjectManager : MonoBehaviour {
     [SerializeField] private GameObject linePrefab;
     [SerializeField] private float minLineLength = 0.2f;
     [SerializeField] private float lineWidth = 0.5f;
+    [SerializeField] private float lineZ = -0.1f;
 
     [Inject] private ISubscriber<FlickEvent> flickSub;
 
@@ -36,7 +37,7 @@ public class ObjectManager : MonoBehaviour {
         if (magnitude > minLineLength) {
             var line = container.Instantiate(linePrefab, this.transform);
 
-            line.transform.position = fev.center;
+            line.transform.position = new Vector3(fev.center.x, fev.center.y, lineZ);
             line.transform.right = fev.inverse.normalized;
             line.transform.localScale = new Vector3(fev.magnitude, lineWidth, lineWidth);
         }
