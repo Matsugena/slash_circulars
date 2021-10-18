@@ -13,7 +13,7 @@ public class Enemy : MonoBehaviour {
     [Inject] private ISubscriber<AttackData> _onAttack { get; set; }
     private HasDestoryAnimator _hasDestroyAnimator;
 
-    [SerializeField] private int hitPoint = 10;
+    [SerializeField] private int hitPoint = 1;
 
     private ReactiveProperty<bool> hasDestroy = new ReactiveProperty<bool>(false);
 
